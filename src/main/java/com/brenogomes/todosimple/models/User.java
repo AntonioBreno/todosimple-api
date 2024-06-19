@@ -9,10 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table(name = User.TABLE_NAME)
@@ -21,7 +25,7 @@ public class User {
 	public interface CreateUser{}
 	public interface UpdateUser{}
 
-	public static final String TABLE_NAME  ="user";
+	public static final String TABLE_NAME  ="users";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,13 +40,16 @@ public class User {
 	private String username;
 	
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@Column(name = "password", length = 60, nullable = false)
 	@NotNull(groups = {CreateUser.class, UpdateUser.class})
 	@NotEmpty(groups = {CreateUser.class, UpdateUser.class})
 	@Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 60)
 	private String password;
-
-
+	
+	@OneToMany(mappedBy = "user")
+	private List<Task> tasks = new ArrayList<>();
+	
 	public User(Long id, String username, String password) {
 		super();
 		this.id = id;
@@ -80,7 +87,16 @@ public class User {
 		this.password = password;
 	}
 
-	
+	public List<Task> getTasks() {
+		return tasks;
+	}
+
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
+
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -90,8 +106,14 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		return Objects.equals(id, other.id) && Objects.equals(password, other.password)
-				&& Objects.equals(username, other.username);
+		if(this.id == null)
+			if(other.id == null)
+				return false;
+			else if (!this.id.equals(other.id))
+				return false;
+		return Objects.equals(this.id, other.id) && Objects.equals(this.username, other.username)
+				&& Objects.equals(this.password, other.password);
+				
 	}
 	
 	public int hashCode() {
@@ -100,8 +122,6 @@ public class User {
 		result = prime * result + (this.id == null? 0 : this.id.hashCode());
 		return result;
 	}
-	
-	//private List<Task> tasks = new ArrayList<>();
 	
 	
 }
