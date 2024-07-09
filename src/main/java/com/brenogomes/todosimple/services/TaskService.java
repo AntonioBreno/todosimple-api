@@ -1,5 +1,6 @@
 package com.brenogomes.todosimple.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import com.brenogomes.todosimple.models.User;
 import com.brenogomes.todosimple.repositores.TaskRepository;
 
 @Service
-public class TaskSever {
+public class TaskService {
 
 	@Autowired
 	private TaskRepository taskRepository;
@@ -23,6 +24,11 @@ public class TaskSever {
 		return task.orElseThrow(()-> new RuntimeException(
 				"Tarefa não encontrada! Id: " + id + ", tipo: " + Task.class.getName()
 				));  
+	}
+	
+	public List<Task> findAllByUserId(Long userId){
+		List<Task> tasks = this.taskRepository.findByUser_Id(userId);
+		return tasks;
 	}
 	
 	public Task create(Task obj){
