@@ -51,14 +51,19 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private List<Task> tasks = new ArrayList<>();
 	
+	public User() {
+		
+	}
+
+
 	public User(Long id, String username, String password) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.password = password;
 	}
-
-
+	
+	
 	public Long getId() {
 		return id;
 	}
