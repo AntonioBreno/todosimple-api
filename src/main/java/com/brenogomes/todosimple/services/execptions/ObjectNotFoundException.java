@@ -1,4 +1,4 @@
-package exceptions;
+package com.brenogomes.todosimple.services.execptions;
 
 import javax.persistence.EntityNotFoundException;
 

@@ -1,4 +1,4 @@
-package exceptions;
+package com.brenogomes.todosimple.services.execptions;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

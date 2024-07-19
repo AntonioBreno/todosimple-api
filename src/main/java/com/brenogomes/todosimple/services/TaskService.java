@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import com.brenogomes.todosimple.models.Task;
 import com.brenogomes.todosimple.models.User;
 import com.brenogomes.todosimple.repositores.TaskRepository;
-
-import exceptions.DataBindingViolationException;
-import exceptions.ObjectNotFoundException;
+import com.brenogomes.todosimple.services.execptions.DataBindingViolationException;
+import com.brenogomes.todosimple.services.execptions.ObjectNotFoundException;
 
 @Service
 public class TaskService {

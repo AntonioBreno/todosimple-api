@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import exceptions.DataBindingViolationException;
-import exceptions.ObjectNotFoundException;
+import com.brenogomes.todosimple.services.execptions.DataBindingViolationException;
+import com.brenogomes.todosimple.services.execptions.ObjectNotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "Global_Exception_Handler")
