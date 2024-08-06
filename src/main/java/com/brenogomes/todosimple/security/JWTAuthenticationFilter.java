@@ -1,6 +1,7 @@
 package com.brenogomes.todosimple.security;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.servlet.FilterChain;
@@ -18,7 +19,7 @@ import com.brenogomes.todosimple.exceptions.GlobalExceptionHandler;
 import com.brenogomes.todosimple.models.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.io.IOException;
+
 
 public class JWTAuthenticationFilter  extends UsernamePasswordAuthenticationFilter{
 
@@ -43,7 +44,7 @@ public class JWTAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
 
             Authentication authentication = this.authenticationManager.authenticate(authToken);
             return authentication;
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e); 
         }
     }
