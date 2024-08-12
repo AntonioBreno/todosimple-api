@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JWTAuthenticationFilter  extends UsernamePasswordAuthenticationFilter{
 
-	private AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     private JWTUtil jwtUtil;
 
@@ -45,7 +45,7 @@ public class JWTAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
             Authentication authentication = this.authenticationManager.authenticate(authToken);
             return authentication;
         } catch (IOException e) {
-            throw new RuntimeException(e); 
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,4 +59,5 @@ public class JWTAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
         response.addHeader("Authorization", "Bearer " + token);
         response.addHeader("access-control-expose-headers", "Authorization");
     }
+
 }

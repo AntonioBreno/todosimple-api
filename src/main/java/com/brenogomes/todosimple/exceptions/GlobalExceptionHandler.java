@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.validation.FieldError;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.brenogomes.todosimple.services.execptions.AuthorizationException;
 import com.brenogomes.todosimple.services.execptions.DataBindingViolationException;
 import com.brenogomes.todosimple.services.execptions.ObjectNotFoundException;
 
@@ -30,18 +32,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  implements AuthenticationFailureHandler{
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler implements AuthenticationFailureHandler {
 
-	@Value("${server.error.include-exception}")
+    @Value("${server.error.include-exception}")
     private boolean printStackTrace;
-	
-	@Override
-	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+
+    @Override
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException methodArgumentNotValidException,
             HttpHeaders headers,
             HttpStatus status,
-            WebRequest request){
+            WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 "Validation error. Check 'errors' field for details.");
@@ -50,7 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
         }
         return ResponseEntity.unprocessableEntity().body(errorResponse);
     }
-	
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleAllUncaughtException(
@@ -64,7 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 request);
     }
-	 
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<Object> handleDataIntegrityViolationException(
@@ -78,7 +80,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
                 HttpStatus.CONFLICT,
                 request);
     }
-	 
+
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<Object> handleConstraintViolationException(
@@ -90,7 +92,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
                 HttpStatus.UNPROCESSABLE_ENTITY,
                 request);
     }
-	 
+
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleObjectNotFoundException(
@@ -102,7 +104,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
                 HttpStatus.NOT_FOUND,
                 request);
     }
-	 
+
     @ExceptionHandler(DataBindingViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<Object> handleDataBindingViolationException(
@@ -115,7 +117,42 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
                 request);
     }
 
-	 
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Object> handleAuthenticationException(
+            AuthenticationException authenticationException,
+            WebRequest request) {
+        log.error("Authentication error ", authenticationException);
+        return buildErrorResponse(
+                authenticationException,
+                HttpStatus.UNAUTHORIZED,
+                request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleAccessDeniedException(
+            AccessDeniedException accessDeniedException,
+            WebRequest request) {
+        log.error("Authorization error ", accessDeniedException);
+        return buildErrorResponse(
+                accessDeniedException,
+                HttpStatus.FORBIDDEN,
+                request);
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleAuthorizationException(
+            AuthorizationException authorizationException,
+            WebRequest request) {
+        log.error("Authorization error ", authorizationException);
+        return buildErrorResponse(
+                authorizationException,
+                HttpStatus.FORBIDDEN,
+                request);
+    }
+
     private ResponseEntity<Object> buildErrorResponse(
             Exception exception,
             HttpStatus httpStatus,
@@ -123,7 +160,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
         return buildErrorResponse(exception, exception.getMessage(), httpStatus, request);
     }
 
-	 
     private ResponseEntity<Object> buildErrorResponse(
             Exception exception,
             String message,
@@ -135,7 +171,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
         }
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }
-    
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
@@ -146,6 +182,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  impl
         response.getWriter().append(errorResponse.toJson());
     }
 
-	 
-	 
 }

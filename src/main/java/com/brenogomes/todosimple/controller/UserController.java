@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +31,11 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<User> finfById(@PathVariable Long id){
-		User obj = this.userService.findById(id);
-		return ResponseEntity.ok().body(obj);
-	}
+	 @GetMapping("/{id}")
+	    public ResponseEntity<User> findById(@PathVariable Long id) {
+	        User obj = this.userService.findById(id);
+	        return ResponseEntity.ok().body(obj);
+	    }
 	
 	@PostMapping
 	@Validated(CreateUser.class)
