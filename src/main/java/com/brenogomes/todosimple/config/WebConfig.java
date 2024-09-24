@@ -12,6 +12,9 @@ public class WebConfig implements WebMvcConfigurer{
 	//Configuração para permitir todas as rotas 
 	
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**");
-	}
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
+    }
 }
